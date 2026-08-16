@@ -8,7 +8,7 @@ import { execSync } from 'node:child_process';
 
 
 const npmPrefix = execSync('npm prefix').toString().trim();
-const pluginXmlPath = join(npmPrefix, 'src/plugins/terminal/plugin.xml');
+const pluginXmlPath = join(npmPrefix, 'cordova/plugins/terminal/plugin.xml');
 const permissionLine = `        <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />`;
 const permissionRegex = /^\s*<uses-permission android:name="android\.permission\.MANAGE_EXTERNAL_STORAGE"\s*\/>\s*$/gm;
 
@@ -67,7 +67,7 @@ async function removePermission() {
 function updatePlugin() {
   try {
     const prefix = execSync('npm prefix').toString().trim();
-    const pluginPath = join(prefix, 'src/plugins/terminal');
+    const pluginPath = join(prefix, 'cordova/plugins/terminal');
 
     execSync('cordova plugin remove com.nakastudio.coffeecode.rk.exec.terminal', { stdio: 'inherit' });
     execSync(`cordova plugin add "${pluginPath}"`, { stdio: 'inherit' });
