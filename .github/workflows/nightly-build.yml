@@ -110,7 +110,7 @@ jobs:
         with:
           distribution: temurin
           java-version: "21"
-          cache: ${{ (!(inputs.is_PR && inputs.PR_NUMBER) && github.ref == 'refs/heads/main' && 'gradle') || '' }}
+          cache: ""
 
       - name: Setup Node
         uses: actions/setup-node@v7
@@ -150,8 +150,8 @@ jobs:
           UPDATED="${{ steps.base.outputs.version }}-${{ env.VERSION_LABEL }}.$SUFFIX"
           sed -i "s/version=\"${{ steps.base.outputs.version }}\"/version=\"$UPDATED\"/g" config.xml
           echo "updated_version=$UPDATED" >> "$GITHUB_OUTPUT"
-          echo "NORMAL_APK_PATH=/tmp/acode-debug-normal-$UPDATED.apk" >> "$GITHUB_ENV"
-          echo "FDROID_APK_PATH=/tmp/acode-debug-fdroid-$UPDATED.apk" >> "$GITHUB_ENV"
+          echo "NORMAL_APK_PATH=/tmp/cfcode-debug-normal-$UPDATED.apk" >> "$GITHUB_ENV"
+          echo "FDROID_APK_PATH=/tmp/cfcode-debug-fdroid-$UPDATED.apk" >> "$GITHUB_ENV"
 
       - name: Install deps
         run: |
