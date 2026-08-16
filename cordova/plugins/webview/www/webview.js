@@ -1,4 +1,4 @@
-const SERVICE = "AcodeWebView";
+const SERVICE = "CFCodeWebView";
 
 let messageCallback = null;
 

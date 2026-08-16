@@ -15,3 +15,7 @@
 - Plugin di `src/plugins/` sementara masih pake ID Acode, rename belakangan
 - Build via GitHub Actions (Nightly Release workflow)
 - Package ID: com.nakastudio.coffeecode
+
+## Cordova Plugins - Pending Cleanup
+- [ ] browser/utils/updatePackage.js - Java package paths masih foxdebug
+- [ ] system/utils/changeProvider.js - masih referensi com.foxdebug

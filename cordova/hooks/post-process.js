@@ -38,7 +38,7 @@ function getPackageName() {
   }
   const content = fs.readFileSync(configPath, 'utf-8');
   const match = content.match(/id="([^"]+)"/);
-  const packageName = match ? match[1] : 'com.foxdebug.acode';
+  const packageName = match ? match[1] : 'com.nakastudio.coffeecode';
   return packageName;
 }
 
@@ -227,7 +227,7 @@ function removeLegacyKeyboardWorkaround() {
 
     const content = fs.readFileSync(mainActivityPath, 'utf-8');
     const updatedContent = content
-      .replace(/\r?\nimport com\.foxdebug\.system\.SoftInputAssist;/, '')
+      .replace(/\r?\nimport com\.nakastudio\.system\.SoftInputAssist;/, '')
       .replace(/\r?\n\s*private SoftInputAssist softInputAssist;\r?\n/, '\n')
       .replace(
         /\r?\n\s*softInputAssist = new SoftInputAssist\(this\);/,

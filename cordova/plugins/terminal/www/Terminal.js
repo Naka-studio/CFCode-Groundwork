@@ -210,13 +210,13 @@ const Terminal = {
                     "org"
                 ],
 
-                acodeFoundation: [
-                    "Acode",
+                cfcodeFoundation: [
+                    "CF Code",
                     "-",
                     "Foundation"
                 ],
 
-                acodeRepo: [
+                cfcodeRepo: [
                     "A",
                     "code"
                 ],
@@ -226,8 +226,8 @@ const Terminal = {
                     "Coder"
                 ],
 
-                acodexServer: [
-                    "acodex",
+                cfcodexServer: [
+                    "cfcodex",
                     "_",
                     "server"
                 ],
@@ -244,9 +244,9 @@ const Terminal = {
                 ...strings.protocol,
                 ...strings.rawGithubDomain,
                 "/",
-                ...strings.acodeFoundation,
+                ...strings.cfcodeFoundation,
                 "/",
-                ...strings.acodeRepo,
+                ...strings.cfcodeRepo,
                 "/main/src/plugins/proot/libs/"
             );
 
@@ -256,7 +256,7 @@ const Terminal = {
                 "/",
                 ...strings.bajrangCoder,
                 "/",
-                ...strings.acodexServer,
+                ...strings.cfcodexServer,
                 "/releases/latest/download/"
             );
 

@@ -1,4 +1,4 @@
-// setup acode for the first time
+// setup cfcode for the first time
 // 1. install dependencies
 // 2. add cordova platform android@10.2
 // 3. install cordova plugins
@@ -12,7 +12,7 @@ const fs = require("node:fs");
 const path = require("node:path");
 const PLATFORM_FILES = [".DS_Store"];
 const PACKAGE_MANAGERS = new Set(["bun", "npm", "pnpm", "yarn"]);
-const ID_PAID = "com.foxdebug.acode";
+const ID_PAID = "com.nakastudio.coffeecode";
 const ADMOB_PLUGIN_DIR = "admob";
 
 function isPaidVersion() {
