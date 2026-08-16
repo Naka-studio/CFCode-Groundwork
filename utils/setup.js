@@ -5,7 +5,7 @@
 // cordova-plugin-buildinfo
 // cordova-plugin-device
 // cordova-plugin-file
-// all the plugins in ./src/plugins
+// all the plugins in../cordova/plugins
 
 const { execSync } = require("node:child_process");
 const fs = require("node:fs");
@@ -81,11 +81,11 @@ execSync("cordova plugin add cordova-plugin-device", { stdio: "inherit" });
 execSync("cordova plugin add cordova-plugin-file", { stdio: "inherit" });
 
 const shouldSkipAdmob = isPaidVersion();
-const plugins = fs.readdirSync(path.join(__dirname, "../src/plugins"));
+const plugins = fs.readdirSync(path.join(__dirname, "../cordova/plugins"));
 plugins.forEach((plugin) => {
 	if (PLATFORM_FILES.includes(plugin) || plugin.startsWith(".")) return;
-	const pluginPath = path.join(__dirname, "../src/plugins", plugin);
+	const pluginPath = path.join(__dirname, "../cordova/plugins", plugin);
 	if (!fs.lstatSync(pluginPath).isDirectory()) return;
 	if (shouldSkipAdmob && plugin === ADMOB_PLUGIN_DIR) return;
-	execSync(`cordova plugin add ./src/plugins/${plugin}`, { stdio: "inherit" });
+	execSync(`cordova plugin add ./cordova/plugins/${plugin}`, { stdio: "inherit" });
 });
