@@ -103,9 +103,19 @@
 ## src/settings/ → src/services/settings/
 ## src/lang/ → src/locales/
 ## src/res/ → src/assets/
-## src/handlers/ → src/core/events/
+## src/handlers/ → tersebar (lihat mapping per file)
 ## src/fileSystem/ → src/core/filesystem/
 ## src/theme/ → src/services/theme/
 ## src/utils/ → src/shared/utils/
 ## src/views/ → src/views/
 ## src/plugins/ → src/extensions/
+
+## Koreksi Mapping
+
+### src/fileSystem/
+- ftp.js, sftp.js → src/core/filesystem/ (capability, bukan platform-specific)
+- externalFs.js, internalFs.js → src/platform/android/filesystem/ (Android Storage Access)
+
+### src/handlers/
+- purchase.js → src/services/purchase/ (domain tersendiri)
+- windowResize.js → src/ui/layout/ (UI concern, bukan platform-specific)
