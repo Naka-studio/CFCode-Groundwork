@@ -2,72 +2,74 @@ import "core-js/stable";
 import "html-tag-js/dist/polyfill";
 
 import "./main.scss";
-import "res/icons/style.css";
-import "res/file-icons/style.css";
+import "assets/icons/style.css";
+import "assets/file-icons/style.css";
 import "styles/overrideAceStyle.scss";
 import "styles/wideScreen.scss";
-// Editor tabs use a shadow root that only links build/main.css.
-import "pages/welcome/welcome.scss";
+import "ui/pages/welcome/welcome.scss";
 
-import "lib/polyfill";
-import "cm/supportedModes";
-import "components/WebComponents";
-import "handlers/editorWorkaround";
+import "shared/utils/polyfill";
+import "editor/codemirror/supportedModes";
+import "ui/components/WebComponents";
+import "core/editor/editorWorkaround";
 
-import fsOperation from "fileSystem";
-import sidebarApps from "sidebarApps";
-import { setKeyBindings } from "cm/commandRegistry";
-import { hasConnectedServers } from "cm/lsp/connectionState";
+import fsOperation from "core/filesystem";
+import sidebarApps from "ui/sidebar";
+import { setKeyBindings } from "editor/codemirror/commandRegistry";
+import { hasConnectedServers } from "editor/codemirror/lsp/connectionState";
 import {
 	getModeForPath,
 	getModes,
 	getModesByName,
 	initModes,
-} from "cm/modelist";
-import Contextmenu from "components/contextmenu";
-import Sidebar from "components/sidebar";
-import tile from "components/tile";
-import toast from "components/toast";
-import confirm from "dialogs/confirm";
-import intentHandler, { processPendingIntents } from "handlers/intent";
-import keyboardHandler, { keydownState } from "handlers/keyboard";
-import quickToolsInit from "handlers/quickToolsInit";
-import windowResize from "handlers/windowResize";
-import acode from "lib/acode";
-import actionStack from "lib/actionStack";
-import adRewards from "lib/adRewards";
-import ajax from "lib/ajax";
-import applySettings from "lib/applySettings";
-import checkFiles from "lib/checkFiles";
-import { canSaveFile } from "lib/commands";
-import config from "lib/config";
-import EditorFile from "lib/editorFile";
-import EditorManager from "lib/editorManager";
-import { initFileList } from "lib/fileList";
-import fonts from "lib/fonts";
-import lang from "lib/lang";
-import loadPlugins from "lib/loadPlugins";
-import Logger from "lib/logger";
-import notificationManager from "lib/notificationManager";
-import openFolder, { addedFolder } from "lib/openFolder";
-import { registerPrettierFormatter } from "lib/registerPrettierFormatter";
-import restoreFiles from "lib/restoreFiles";
-import settings from "lib/settings";
+} from "editor/codemirror/modelist";
+import Contextmenu from "ui/components/contextmenu";
+import Sidebar from "ui/components/sidebar";
+import tile from "ui/components/tile";
+import toast from "ui/components/toast";
+import confirm from "ui/dialogs/confirm";
+import intentHandler, { processPendingIntents } from "platform/android/intent";
+import keyboardHandler, { keydownState } from "platform/android/keyboard";
+import quickToolsInit from "ui/components/quickTools/quickToolsInit";
+import windowResize from "ui/layout/windowResize";
+import acode from "extensions/api/cfcode";
+import actionStack from "core/editor/actionStack";
+import adRewards from "services/analytics/adRewards";
+import ajax from "shared/utils/general/ajax";
+import applySettings from "services/settings/applySettings";
+import checkFiles from "core/filesystem/checkFiles";
+import { canSaveFile } from "core/commands/commands";
+import config from "app/config/config";
+import EditorFile from "core/editor/editorFile";
+import EditorManager from "core/editor/editorManager";
+import { initFileList } from "core/filesystem/fileList";
+import fonts from "services/theme/fonts";
+import lang from "services/language/lang";
+import loadPlugins from "services/plugin/loadPlugins";
+import Logger from "shared/utils/general/logger";
+import notificationManager from "services/notification/notificationManager";
+import openFolder, { addedFolder } from "core/filesystem/openFolder";
+import { registerPrettierFormatter } from "modules/formatter/registerPrettierFormatter";
+import restoreFiles from "app/lifecycle/restoreFiles";
+import settings from "services/settings/settings";
 import startAd, {
 	BANNER_SUPPRESSION_REASON,
 	setBannerSuppressed,
-} from "lib/startAd";
+} from "services/analytics/startAd";
 import mustache from "mustache";
-import themes from "theme/list";
-import { initHighlighting } from "utils/codeHighlight";
-import { getEncoding, initEncodings } from "utils/encodings";
-import helpers from "utils/helpers";
-import { INSTALL_SOURCE_PLAY, isPlayStoreInstall } from "utils/installSource";
-import loadPolyFill from "utils/polyfill";
-import Url from "utils/Url";
+import themes from "services/theme/list";
+import { initHighlighting } from "shared/utils/codeHighlight";
+import { getEncoding, initEncodings } from "shared/utils/encodings";
+import helpers from "shared/utils/helpers";
+import {
+	INSTALL_SOURCE_PLAY,
+	isPlayStoreInstall,
+} from "shared/utils/installSource";
+import loadPolyFill from "shared/utils/polyfill";
+import Url from "shared/utils/Url";
 import $_fileMenu from "views/file-menu.hbs";
 import $_menu from "views/menu.hbs";
-import auth, { loginEvents } from "./lib/auth";
+import auth, { loginEvents } from "services/auth/auth";
 
 const oldPreventDefault = TouchEvent.prototype.preventDefault;
 const previousVersionCode = Number.parseInt(localStorage.versionCode, 10);
@@ -163,14 +165,14 @@ async function onDeviceReady() {
 			window.log("error", e);
 		});
 
-		if (localStorage.acode_pro === "true") {
+		if (localStorage.cfcode_pro === "true") {
 			config.HAS_PRO = true;
 		}
 
 		if (navigator.onLine) {
 			const purchases = await helpers.promisify(iap.getPurchases);
 			const isPro = purchases.find((p) =>
-				p.productIds.includes("acode_pro_new"),
+				p.productIds.includes("cfcode_pro"),
 			);
 			if (isPro) {
 				config.HAS_PRO = true;
@@ -268,7 +270,7 @@ async function onDeviceReady() {
 
 	if (settings.value.developerMode) {
 		try {
-			const devTools = (await import("lib/devTools")).default;
+			const devTools = (await import("shared/utils/general/devTools")).default;
 			await devTools.init(false);
 		} catch (error) {
 			console.error("Failed to initialize developer tools", error);
@@ -317,7 +319,7 @@ async function onDeviceReady() {
 			try {
 				const user = await auth.getLoggedInUser();
 				if (user) {
-					if (Boolean(user.acode_pro)) {
+					if (Boolean(user.cfcode_pro)) {
 						config.HAS_PRO = true;
 					}
 					loginEvents.emit();
@@ -340,7 +342,7 @@ async function onDeviceReady() {
 		navigator.onLine
 	) {
 		cordova.plugin.http.sendRequest(
-			"https://api.github.com/repos/Acode-Foundation/Acode/releases/latest",
+			"https://api.github.com/repos/Naka-studio/CFCode-Groundwork/releases/latest",
 			{
 				method: "GET",
 				responseType: "json",
@@ -401,7 +403,7 @@ async function onDeviceReady() {
 		);
 	}
 	const { default: checkPluginsUpdate } = await import(
-		/* webpackChunkName: "checkPluginsUpdate" */ "lib/checkPluginsUpdate"
+		/* webpackChunkName: "checkPluginsUpdate" */ "services/plugin/checkPluginsUpdate"
 	);
 	checkPluginsUpdate()
 		.then((updates) => {
@@ -413,7 +415,7 @@ async function onDeviceReady() {
 					icon: "extension",
 					action: async () => {
 						const { default: plugins } = await import(
-							/* webpackChunkName: "plugins" */ "pages/plugins"
+							/* webpackChunkName: "plugins" */ "ui/pages/extensions/extensions"
 						);
 						plugins(updates);
 					},
@@ -427,7 +429,7 @@ async function onLogin() {
 	try {
 		const user = await auth.getLoggedInUser();
 		if (!user) return;
-		if (Boolean(user.acode_pro)) {
+		if (Boolean(user.cfcode_pro)) {
 			config.HAS_PRO = true;
 		}
 		if (config.HAS_PRO) {
@@ -466,7 +468,7 @@ async function setDebugInfo() {
 	const chromeMatch = userAgent.match(/Chrome\/([0-9.]+)/);
 	const webviewVersion = chromeMatch ? chromeMatch[1] : "Unknown";
 	const webviewMajor = Number.parseInt(webviewVersion, 10);
-	const minWebviewMajor = window.__ACODE_MIN_WEBVIEW_MAJOR__ || 84;
+	const minWebviewMajor = window.__CFCODE_MIN_WEBVIEW_MAJOR__ || 84;
 	const webviewStatus =
 		Number.isFinite(webviewMajor) && webviewMajor < minWebviewMajor
 			? ` (minimum supported: ${minWebviewMajor})`
@@ -537,7 +539,7 @@ async function loadApp() {
 	);
 	const $header = tile({
 		type: "header",
-		text: "Acode",
+		text: "CF Code",
 		lead: $navToggler,
 		tail: $menuToggler,
 	});
@@ -657,7 +659,7 @@ async function loadApp() {
 
 	if (!files.length) {
 		const { default: openWelcomeTab } = await import(
-			/* webpackChunkName: "welcome" */ "pages/welcome"
+			/* webpackChunkName: "welcome" */ "ui/pages/welcome"
 		);
 		openWelcomeTab();
 	}
@@ -703,7 +705,7 @@ async function loadApp() {
 	acode.exec("save-state");
 	initFileList();
 
-	import(/* webpackChunkName: "terminal" */ "components/terminal").then(
+	import(/* webpackChunkName: "terminal" */ "ui/terminal").then(
 		({ TerminalManager }) => {
 			TerminalManager.restorePersistedSessions().catch((error) => {
 				console.error("Terminal restoration failed:", error);
